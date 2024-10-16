@@ -2,7 +2,7 @@
 %%
 %%  Master's thesis
 %%
-%%  Author: FORNAVN EFTERNAVN
+%%  Author: Rune Thorsen
 %%
 %%  Preamble
 %%
@@ -23,13 +23,6 @@
 
 % Various tools needed in the preamble and by some packages
 \usepackage{etoolbox}
-
-% Inclusion of code
-% --> Needs to be loaded this early to avoid problems with some font packages
-% NOTE: This packages requires the Python-module 'Pygments' to be installed
-% NOTE: Fails unless this file is compiled with '--shell-escape' !
-% \usepackage{minted}
-% \usemintedstyle{friendly}
 
 % Language (has to be loaded before the fonts..?)
 % Load both languages to make two different abstracts
@@ -126,15 +119,76 @@
 \pagestyle{jrmbsc}
 \chapterstyle{jrmbsc}
 
-% Turn on numbering of subsections
-\setsecnumdepth{subsection}
+% Turn on numbering of paragraphs
+\setsecnumdepth{paragraph}
 
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% Floats, captions and footnotes
+% Science
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Basic math (might already be loaded by the math font package)
+\usepackage{amsfonts,amssymb,bm} % God matematik
+\usepackage{mathrsfs}
+\usepackage{stmaryrd}
+
+% Bad-ass math!
+\usepackage{mathtools}
+\mathtoolsset{showonlyrefs=false,showmanualtags}
+%\mathtoolsset{showonlyrefs=true}  % If only to show numbers on ref'ed eq's
+
+% Units
+\usepackage{siunitx}
+\sisetup{separate-uncertainty=true}
+
+% Computer-related units
+\DeclareSIUnit\byte{B}
+
+% Delimeters
+\newcommand{\abs}[1]{\ensuremath{\left\vert #1 \right\vert}\xspace}
+
+% Tal og talmængder
+\newcommand{\e}{\mathrm{e}} %Eulers tal
+\newcommand{\N}{\mathbb{N}} %De naturlige tal
+\newcommand{\Z}{\mathbb{Z}} %Heltallene
+\newcommand{\Q}{\mathbb{Q}} %De rationelle tal
+\newcommand{\A}{\mathbb{A}} %De algebraiske tal
+\newcommand{\R}{\mathbb{R}} %De reelle tal
+\newcommand{\I}{\mathbb{I}} %De imaginære tal
+\newcommand{\C}{\mathbb{C}} %De komplekse tal
+\newcommand{\F}{\mathbb{F}} %Et vilkårligt legeme
+\newcommand{\K}{\mathbb{K}} %Endnu et vilkårligt talrum
+
+% Algoritmer
+\usepackage{algpseudocode,algorithm}
+
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Floats, captions, footnotes and counters
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % Include graphics
 % \usepackage{graphicx}  % ALREADY IMPORTED
+
+% Specificér counter til equations
+\counterwithin{equation}{chapter}
+
+% Skift counter til algoritmer
+\makeatletter
+\let\c@algorithm\c@equation
+\renewcommand{\thealgorithm}{\thechapter.\arabic{equation}}
+\makeatother
+
+% Gode tabeller
+\usepackage{array,tabularx,booktabs,authblk,hhline}
+
+% Skift counter til figurer
+\makeatletter
+\let\c@figure\c@equation
+\makeatother
+
+% Skift counter til tabeller
+\makeatletter
+\let\c@table\c@equation
+\makeatother
 
 % Subfloats
 \newsubfloat{figure}
@@ -159,36 +213,6 @@
 % Cool tables with footnotes (using the same style as define just above)
 \usepackage[online]{threeparttable}
 \appto\TPTnoteSettings{\footnotesize}
-
-
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% Science
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% Basic math (might already be loaded by the math font package)
-\usepackage{amsmath}
-
-% Bad-ass math!
-\usepackage{mathtools}
-\mathtoolsset{showonlyrefs=false,showmanualtags}
-% \mathtoolsset{showonlyrefs=true}  % If only to show numbers on ref'ed eq's
-
-% Units
-\usepackage{siunitx}
-\sisetup{separate-uncertainty=true}
-
-% Declaration of some nice units
-\DeclareSIUnit\au{AU}
-\DeclareSIUnit\year{yr}
-\DeclareSIUnit\erg{erg}
-\DeclareSIUnit\msun{M_{\odot}}
-\DeclareSIUnit\lsun{L_{\odot}}
-
-% Computer-related units
-\DeclareSIUnit\byte{B}
-
-% Delimeters
-\DeclarePairedDelimiter\abs{\lvert}{\rvert}
-\DeclarePairedDelimiter\norm{\langle}{\rangle}
 
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -232,21 +256,40 @@
 
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% Theorems
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+\usepackage{xpatch}
+\usepackage{courier}
+
+% % Sætninger og beviser (opsætning længere nede)
+\usepackage[standard,thmmarks,amsmath]{ntheorem}
+
+% % Definition af sætning, lemma og korollar mm. med fortløbende numerering
+\newtheorem{thm}[equation]{Theorem}%[section]
+\newtheorem{lem}[equation]{Lemma}
+\newtheorem{cor}[equation]{Corollary}
+\newtheorem{defi}[equation]{Definition}
+\newtheorem{prop}[equation]{Proposition}
+%\newtheorem{remark}[algorithm]{Remark}
+%\newtheorem{example}[algorithm]{Example}
+\newtheorem{prob}[equation]{Problem}
+\newtheorem{conj}[equation]{Conjecture}
+
+
+% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % References
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 % Smart quotations
-\usepackage{csquotes}
+\usepackage[style=english]{csquotes}
 
 % URL's
 \usepackage{url}
 
 % Bibliography
 \usepackage[backend=biber,
-  style=authoryear-comp,  % Citation style as (AUTHOR YEAR)
-  sorting=ynt,            % Sort citations as YEAR-NAME-TITLE
+  style=numeric-comp,     % Citation style as [NUMBER]
   sortcites=true,
-  dashed=false,
-  maxcitenames=3,         % Increase/decrease to include more/fewer authors in cites
+  maxcitenames=1,         % Increase/decrease to include more/fewer authors in cites
   maxbibnames=5,          % As above, but in the bibliography
   uniquelist=false,
   uniquename=false,
@@ -272,10 +315,6 @@
 % \DefineBibliographyStrings{danish}{%
 %   andothers = {et\addabbrvspace al\adddot}
 % }
-
-% DANISH STUFF: Title of bibliography and entry in toc
-% \defbibheading{memoirbib}[Litteraturliste]{%
-%   \chapter*{#1} \addcontentsline{toc}{chapter}{#1}}
   
 % Referencing packages (needs to be loaded in this order!)
 % --> For references, use: \cref{}  or \Cref{} !
@@ -284,7 +323,7 @@
 \usepackage[
   unicode=true,
   pdftitle={\projecttitle},
-  pdfauthor={John Doe},  % Change this name!
+  pdfauthor={Rune N. T. Thorsen},  % Change this name!
   pdfkeywords={},
   bookmarksopen=true,
   pdfdisplaydoctitle=true,
@@ -304,38 +343,17 @@
 }{}
 \makeatother
 
-
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% Theorems (add if required)
-% ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-% % Sætninger og beviser (opsætning længere nede)
-% \usepackage[amsmath,thmmarks]{ntheorem}
-
-% % Definition af sætning, lemma og korollar med fortløbende numerering
-% \newtheorem{thm}{Sætning}
-% \newtheorem{lem}[thm]{Lemma}
-% \newtheorem{cor}[thm]{Korollar}
-% \newtheorem{defi}[thm]{Definition}
-% \newtheorem{prop}[thm]{Proposition}
-% \newtheorem{remark}[thm]{Bemærkning}
-
-% % Definition af bevis og bevis for
-% \theoremstyle{nonumberplain}
-% \theoremheaderfont{\normalfont\itshape\bfseries}
-% \theorembodyfont{\normalfont}
-% \theoremsymbol{\ensuremath{\square}}
-% \theoremseparator{.}
-% \newtheorem{proof}{Bevis}
-
-% \theoremstyle{empty}
-% \theoremheaderfont{\normalfont\itshape\bfseries}
-% \theorembodyfont{\normalfont}
-% \theoremsymbol{\ensuremath{\square}}
-% \theoremseparator{.}
-% \newtheorem{proofof}{}
-
-% % Nummerering mht. hvilken section vi er i
-% \numberwithin{thm}{chapter}
+% % Extra names for environments that cleveref can reference
+\crefname{thm}{theorem}{theorems}
+\crefname{lem}{lemma}{lemmas}
+\crefname{cor}{corollary}{corollaries}
+\crefname{defi}{definition}{definitions}
+\crefname{prop}{proposition}{propositions}
+%\crefname{remark}{remark}{remarks}
+%\crefname{example}{example}{examples}
+\crefname{prob}{problem}{problems}
+\crefname{conj}{conjecture}{conjectures}
+%\crefname{algorithm}{algorithm}{algorithms}
 
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -344,36 +362,42 @@
 % Nice spacing in macros
 \usepackage{xspace}
 
-% Small division
-\newcommand\starbreak{\medskip\fancybreak{$*$\qquad$*$\qquad$*$}\medskip}
-
 % Seperation in equation
 \newcommand\eqsep{\ensuremath{\quad , \quad}}
 
-% Generic names
-\newcommand\numpy{NumPy\xspace}
-\newcommand\scipy{SciPy\xspace}
-\newcommand\kepler{\textsl{Kepler}\xspace}
-
-% Diff
-\newcommand\diff[2]{\frac{\text{d}#1}{\text{d}#2}}
-\newcommand\pdiff[2]{\frac{\partial #1}{\partial #2}}
-\newcommand\idiff[2]{\ensuremath{\text{d}#1/\text{d}#2}}
-
-% More lazy stuff
-\newcommand\parname[2]{\left(#1\right)_{\textup{#2}}}
-
 % Vectors (we are doing physics!)
-\renewcommand{\vec}[1]{\ensuremath{\boldsymbol{#1}}\xspace}
+\renewcommand{\vec}[1]{\ensuremath{\boldsymbol{\mathrm{#1}}}\xspace}
 
 % Nice subscript
 \newcommand\var[2]{\ensuremath{#1_{\textup{#2}}\,}\xspace}
 
-% Specific abbreviations and names
-\newcommand\eos{EoS\xspace}
-\newcommand\gar{\textsc{garstec}\xspace}
-\newcommand\Gar{\textsc{Garstec}\xspace}
+% Size of a set
+\newcommand{\size}[1]{\ensuremath{\left\vert #1 \right\vert}\xspace}
 
-% Specific things to be repeated often in the text
-\newcommand\teff{\ensuremath{T_{\textup{eff}}}\xspace}
-\newcommand\logg{\ensuremath{\log g}\xspace}
+% Concatenation of strings operator
+\newcommand{\concat}[2]{\ensuremath{#1 \mathbin{\vert\vert} #2}\xspace}
+
+% XOR operator
+\newcommand{\xor}{\ensuremath{\mathbin{\oplus}}\xspace} % Small
+\newcommand{\Xor}{\ensuremath{\mathop{\mathbin{\bigoplus}}}\xspace} % Large (works with \limits)
+
+% Bra-Ket notation
+\DeclarePairedDelimiter\bra{\langle}{\rvert}
+\DeclarePairedDelimiter\ket{\lvert}{\rangle}
+
+% For multi-line equations (using aligned) with intertext
+% This should NOT be used in general!
+% Also it is placed here, because it needs to be loaded after amsmath (which is loaded by ntheorem)
+\newcommand{\alignedintertext}[1]{
+  \noalign{
+    \vskip\belowdisplayshortskip
+    \vtop{\hsize=\linewidth\noindent#1\par
+    \expandafter}
+    \expandafter\prevdepth\the\prevdepth
+  }
+}
+
+% Used for automatic scaling of parentheses using \pmod{}
+\renewcommand{\pod}[1]{\allowbreak
+   \if@display\mkern18mu\else\mkern8mu\fi\left(#1\right)}
+
